@@ -24,6 +24,8 @@ class Skeletonizer(object):
 
         # medial axis (may be better due to possibility to set mask!
         self.skel_img = morphology.medial_axis(self.skel_img > 1)
+
+        # change back to cv2 image
         self.skel_img = img_as_ubyte(self.skel_img)
 
     def show_skeleton(self):
