@@ -16,6 +16,7 @@ from DataManager import DataManager
 from ImageManager import ImageManager
 from MetaManager import MetaManager
 from IPython import embed
+from Sceletonizer import Sceletonizer
 
 class Tracker(object):
     def __init__(self, path=None, nix_io=False, wait_time=50):
@@ -53,6 +54,9 @@ class Tracker(object):
         # image morphing data
         self._erosion_iterations = 1
         self._dilation_iterations = 4
+
+        # sceletonizer
+        self.sceletonizer = Sceletonizer()
 
         # fish size thresholds
         self._fish_size_threshold = 700
@@ -232,6 +236,11 @@ class Tracker(object):
 
             # morph img
             ret, mo_roi_bg_sub = self.morph_img(roi_bg_sub)
+
+            # reference to sceletonizer
+            self.sceletonizer.img = mo_roi_bg_sub
+            self.sceletonizer.sceletonize()
+            self.sceletonizer.show_sceleton()
 
             # getting contours (of the morphed img)
             ret, thresh_img = cv2.threshold(mo_roi_bg_sub, 127, 255, cv2.THRESH_BINARY)
