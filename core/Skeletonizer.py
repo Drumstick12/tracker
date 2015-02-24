@@ -18,7 +18,12 @@ class Skeletonizer(object):
         self.skel_img = copy.copy(self.img)
         # self.skel_img = cv2.cvtColor(self.skel_img, cv2.COLOR_BGR2GRAY)
         # self.skel_img = cv2.threshold(self.skel_img, 0, 255, cv2.THRESH_OTSU)[1]
-        self.skel_img = morphology.skeletonize(self.skel_img > 1)
+
+        # skeletonize
+        # self.skel_img = morphology.skeletonize(self.skel_img > 1)
+
+        # medial axis (may be better due to possibility to set mask!
+        self.skel_img = morphology.medial_axis(self.skel_img > 1)
         self.skel_img = img_as_ubyte(self.skel_img)
 
     def show_skeleton(self):
@@ -41,7 +46,7 @@ class Skeletonizer(object):
         self._skel_img = pic
 
 # if __name__ == '__main__':
-#     skltnzr = Sceletonizer()
+#     skltnzr = Skeletonizer()
 #     skltnzr.img = cv2.imread("/home/madai/Pictures/test.png")
 #     skltnzr.skeletonize()
 #     skltnzr.show_skeleton()
