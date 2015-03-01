@@ -11,6 +11,14 @@ class Skeletonizer(object):
         self._img = pic or None
         self._skel_img = None
 
+        #self.cut_x_offset =
+
+        self.offset_x = 0
+        self.offset_y = 0
+
+        self.fish_offset_x = 50
+        self.fish_offset_y = 30
+
     def skeletonize(self):
         if self.img is None:
             print "image is None"
@@ -20,16 +28,36 @@ class Skeletonizer(object):
         # self.skel_img = cv2.threshold(self.skel_img, 0, 255, cv2.THRESH_OTSU)[1]
 
         # skeletonize
-        # self.skel_img = morphology.skeletonize(self.skel_img > 1)
+        self.skel_img = morphology.skeletonize(self.skel_img > 1)
 
         # medial axis (may be better due to possibility to set mask!
-        self.skel_img = morphology.medial_axis(self.skel_img > 1)
+        #self.skel_img = morphology.medial_axis(self.skel_img > 1)
         self.skel_img = img_as_ubyte(self.skel_img)
 
     def show_skeleton(self):
         # cv2.imwrite("/home/madai/Pictures/test_skel.png", self.skel_img)
+        if self.skel_img is None:
+            return
         cv2.imshow("skeleton", self.skel_img)
         return
+
+    def cut_img(self, ellipse):
+        shape = self.img.shape
+        center_x = ellipse[0][0]
+        center_y = ellipse[0][1]
+
+        cut_x_1 = center_x - self.fish_offset_x
+        cut_x_2 = center_x + self.fish_offset_x
+        cut_y_1 = center_y - self.fish_offset_y
+        cut_y_2 = center_y + self.fish_offset_y
+        cuts = [cut_x_1, cut_x_2, cut_y_1, cut_y_2]
+        print cuts
+        for i in range(0, len(cuts), 1):
+            if cuts[i] < 0:
+                cuts[i] = 0
+
+        self.img = copy.copy(self.img[cuts[2]:cuts[3], cuts[0]:cuts[1]])
+
 
     @property
     def img(self):
@@ -45,8 +73,9 @@ class Skeletonizer(object):
     def skel_img(self, pic):
         self._skel_img = pic
 
-# if __name__ == '__main__':
-#     skltnzr = Skeletonizer()
-#     skltnzr.img = cv2.imread("/home/madai/Pictures/test.png")
-#     skltnzr.skeletonize()
-#     skltnzr.show_skeleton()
+#if __name__ == '__main__':
+#    skltnzr = Skeletonizer()
+#    skltnzr.img = cv2.imread("test.png")
+#    print (skltnzr.img.shape)
+#    #skltnzr.skeletonize()
+#    #skltnzr.show_skeleton()
