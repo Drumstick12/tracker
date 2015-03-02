@@ -272,12 +272,9 @@ class Tracker(object):
             # fit ellipse on contour
             self.fit_ellipse_on_contour()
 
-            # reference to skeletonizer
-            if self.ellipse is not None:
-                self.skeletonizer.img = mo_roi_bg_sub
-                self.skeletonizer.cut_img(self.ellipse)
-                self.skeletonizer.skeletonize()
-                self.skeletonizer.show_skeleton()
+            # skeletonize
+            self.skeletonizer.skeletonize(mo_roi_bg_sub, self.ellipse)
+            self.skeletonizer.draw_spine(roi_img)
 
             # get line from ellipse
             if self.fish_started and self.ellipse is not None:
