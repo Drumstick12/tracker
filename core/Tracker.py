@@ -237,11 +237,6 @@ class Tracker(object):
             # morph img
             ret, mo_roi_bg_sub = self.morph_img(roi_bg_sub)
 
-            # reference to skeletonizer
-            self.skeletonizer.img = mo_roi_bg_sub
-            self.skeletonizer.skeletonize()
-            self.skeletonizer.show_skeleton()
-
             # getting contours (of the morphed img)
             ret, thresh_img = cv2.threshold(mo_roi_bg_sub, 127, 255, cv2.THRESH_BINARY)
             self.cm.contour_list, hierarchy = cv2.findContours(thresh_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -276,6 +271,10 @@ class Tracker(object):
 
             # fit ellipse on contour
             self.fit_ellipse_on_contour()
+
+            # skeletonize
+            self.skeletonizer.skeletonize(mo_roi_bg_sub, self.ellipse)
+            self.skeletonizer.draw_spine(roi_img)
 
             # get line from ellipse
             if self.fish_started and self.ellipse is not None:
