@@ -3,6 +3,7 @@ import numpy as np
 from skimage import morphology
 from skimage import img_as_ubyte
 import copy
+from IPython import embed
 
 np.set_printoptions(threshold=np.nan)
 
@@ -16,8 +17,8 @@ class Skeletonizer(object):
         self.offset_x = 0
         self.offset_y = 0
 
-        self.fish_offset_x = 50
-        self.fish_offset_y = 30
+        self.fish_offset_x = 100
+        self.fish_offset_y = 100
 
         self.spine = []
 
@@ -40,7 +41,6 @@ class Skeletonizer(object):
         # self.skel_img = morphology.medial_axis(self.skel_img > 1)
 
         # change back to cv2 image
-        #self.skel_img = morphology.medial_axis(self.skel_img > 1)
         self.skel_img = img_as_ubyte(self.skel_img)
 
         self.get_spine()
@@ -51,7 +51,7 @@ class Skeletonizer(object):
         # cv2.imwrite("/home/madai/Pictures/test_skel.png", self.skel_img)
         if self.skel_img is None:
             return
-        # cv2.imshow("skeleton", self.skel_img)
+        cv2.imshow("skeleton", self.skel_img)
         return
 
     def cut_img(self, ellipse):
@@ -74,6 +74,9 @@ class Skeletonizer(object):
         self.img = copy.copy(self.img[cuts[2]:cuts[3], cuts[0]:cuts[1]])
 
     def get_spine(self):
+        # x, y = np.nonzero(self.skel_img)
+        #
+        # self.spine = zip(y + self.offset_x, x + self.fish_offset_y)
         self.spine = []
         for row in range(0, len(self.skel_img), 1):
             for column in range(0, len(self.skel_img[row]), 1):

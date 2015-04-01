@@ -273,7 +273,7 @@ class Tracker(object):
             self.fit_ellipse_on_contour()
 
             # skeletonize
-            self.skeletonizer.skeletonize(mo_roi_bg_sub, self.ellipse)
+            self.skeletonizer.skeletonize(roi_bg_sub, self.ellipse)
             self.skeletonizer.draw_spine(roi_img)
 
             # get line from ellipse
@@ -300,7 +300,7 @@ class Tracker(object):
             if self.im.draw_travel_orientation and self.fish_started:
                 self.im.append_to_travel_orientation()
 
-            self.im.draw_extracted_data(self.ellipse, self.fish_started, roi_img, self.cm.contour_list)
+            # self.im.draw_extracted_data(self.ellipse, self.fish_started, roi_img, self.cm.contour_list)
             self.im.draw_data_on_overview_image(self.roi, self.dm)
 
             # show all imgs
