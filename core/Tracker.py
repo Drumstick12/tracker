@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+__author__ = 'Lorand Madai-Tahy, Jan Grewe'
+
 import numpy as np
 import cv2
 import math
@@ -48,7 +51,7 @@ class Tracker(object):
         # self.frame_counter = 0
 
         # self.__roi = ROI(15, 695, 80, 515)  # Eileen setup
-        self._roi = ROI(160, 80, 700, 525)  # Isabel setup
+        self._roi = ROI(160, 80, 700, 525, "tracking_area")  # Isabel setup
 
         # image morphing data
         self._erosion_iterations = 1
