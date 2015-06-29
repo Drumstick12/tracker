@@ -339,7 +339,7 @@ class Tracker(object):
             self.fit_ellipse_on_contour()
 
             # skeletonize
-            self.skeletonizer.skeletonize(self.im.current_bg_sub, self.ellipse)
+            self.skeletonizer.skeletonize(self.im.current_morphed, self.ellipse)
             self.skeletonizer.draw_spine(roi_img)
 
             # get line from ellipse
