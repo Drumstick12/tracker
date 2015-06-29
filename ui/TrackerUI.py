@@ -7,7 +7,7 @@
 
 from PyQt4 import QtCore, QtGui
 from core.Tracker import Tracker
-from Controller import Controller
+from controller.Controller import Controller
 
 from TabFile import TabFile
 from TabRoi import TabRoi
@@ -36,10 +36,12 @@ class TrackerUserInterface(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
 
+        self.batch_tracking_enabled = False
+
         #main widget
         self.setObjectName(_fromUtf8("self"))
-        self.resize(1400/2, 835)
-        self.setMinimumSize(QtCore.QSize(900/2, 770))
+        self.resize(1000, 835)
+        self.setMinimumSize(QtCore.QSize(450, 770))
 
         # main vertical layout
         self.vertLO_main = QtGui.QVBoxLayout(self)
@@ -91,11 +93,26 @@ class TrackerUserInterface(QtGui.QWidget):
         self.btn_start_tracking = QtGui.QPushButton(self)
         self.btn_start_tracking.setMinimumSize(QtCore.QSize(0, 50))
         self.btn_start_tracking.setObjectName(_fromUtf8("btn_start_tracking"))
+        self.btn_start_tracking.setDisabled(False)
         self.hoLO_bot_buttons.addWidget(self.btn_start_tracking)
+        # vertical layout file label and progress label
+        self.vert_lo_file_progress = QtGui.QVBoxLayout()
+        # file bel
+        self.lbl_file = QtGui.QLabel()
+        self.lbl_file.setObjectName(_fromUtf8("lbl_file"))
+        self.lbl_file.setText(_fromUtf8("no file started"))
+        self.vert_lo_file_progress.addWidget(self.lbl_file)
+        # progress label
+        self.lbl_progress = QtGui.QLabel()
+        self.lbl_progress.setObjectName(_fromUtf8("lbl_progress"))
+        self.lbl_progress.setText(_fromUtf8("Progress:"))
+        self.vert_lo_file_progress.addWidget(self.lbl_progress)
+        self.hoLO_bot_buttons.addLayout(self.vert_lo_file_progress)
         # button abort tracking
         self.btn_abort_tracking = QtGui.QPushButton(self)
         self.btn_abort_tracking.setMinimumSize(QtCore.QSize(0, 50))
         self.btn_abort_tracking.setObjectName(_fromUtf8("btn_abort_tracking"))
+        self.btn_abort_tracking.setDisabled(True)
         self.hoLO_bot_buttons.addWidget(self.btn_abort_tracking)
         # add button layout to main widget layout
         self.vertLO_main.addLayout(self.hoLO_bot_buttons)
@@ -104,15 +121,23 @@ class TrackerUserInterface(QtGui.QWidget):
         self.tab_widget_options.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(self)
 
-        self.tracker = Tracker()
         self.controller = Controller(self)
+        self.connect_controller_to_tabs()
+        self.tracker = Tracker(controller=self.controller)
+
+        # self.tab_roi.populate(self.tracker.roim)
 
         self.controller.preset_options()
         self.connect_widgets()
         self.set_shortcuts()
 
+    def connect_controller_to_tabs(self):
+        self.tab_roi.connect_to_controller(self.controller)
+        self.tab_meta.connect_to_controller(self.controller)
+        # TODO connect to other tabs
+
     def retranslate_ui(self, tracker_main_widget):
-        tracker_main_widget.setWindowTitle(_translate("tracker_main_widget", "Tool For Tracking Fish - [TF]² 1.0", None))
+        tracker_main_widget.setWindowTitle(_translate("tracker_main_widget", "Tool For Tracking Fish - [TF]² Ver. 1.5 beta", None))
 
         self.tab_file.retranslate_tab_file()
         self.tab_roi.retranslate_tab_roi()
@@ -144,8 +169,13 @@ class TrackerUserInterface(QtGui.QWidget):
         y_pos = (screen.height() - gui_size.height() - gui_size.height()) / 2
         self.move(x_pos, y_pos)
 
-    def set_new_tracker(self):
-        self.tracker = Tracker()
+    def set_new_tracker(self, controller):
+        self.tab_roi.clear()
+        self.tab_meta.clear_tabs()
+        if self.batch_tracking_enabled:
+            self.tracker = Tracker(controller=controller, batch_mode_on=True)
+        else:
+            self.tracker = Tracker(controller=controller)
         return
 
     def connect_widgets(self):
@@ -153,6 +183,7 @@ class TrackerUserInterface(QtGui.QWidget):
         self.tab_roi.connect_widgets(self.controller)
         self.tab_adv.connect_widgets(self.controller)
         self.tab_visual.connect_widgets(self.controller)
+        self.tab_meta.connect_widgets(self.controller)
 
         self.btn_start_tracking.clicked.connect(self.controller.start_tracking)
         self.btn_abort_tracking.clicked.connect(self.controller.abort_tracking)

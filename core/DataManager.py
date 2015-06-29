@@ -1,7 +1,11 @@
+import numpy as np
+
 class DataManager(object):
 
     def __init__(self):
         self._frame_counter = 0
+
+        self._video_resolution = None
 
         self._last_pos = None
         self._all_pos_roi = []
@@ -26,12 +30,18 @@ class DataManager(object):
         else:
             number_cnt_list.append(len(cnt_list))
 
-    def set_last_pos(self, ellipse):
-        if ellipse is None:
+    # def set_last_pos(self, ellipse):
+    #     if ellipse is None:
+    #         self.last_pos = None
+    #         return
+    #     else:
+    #         self.last_pos = ellipse[0]
+
+    def set_last_pos(self, clist):
+        if clist is None or len(clist) == 0:
             self.last_pos = None
-            return
         else:
-            self.last_pos = ellipse[0]
+            self.last_pos = np.mean(clist[0], 0)[0]
 
     def save_fish_positions(self, roi):
         self.all_pos_roi.append(self.last_pos)
@@ -215,22 +225,19 @@ class DataManager(object):
         if self.fish_not_detected_count > fish_not_detected_threshold:
             self.fish_not_detected_threshold_reached = True
 
-
-
-
-
-
-
-
-
-
-
     @property
     def frame_counter(self):
         return self._frame_counter
     @frame_counter.setter
     def frame_counter(self, value):
         self._frame_counter = value
+
+    @property
+    def video_resolution(self):
+        return self._video_resolution
+    @video_resolution.setter
+    def video_resolution(self, tuple):
+        self._video_resolution = tuple
 
     @property
     def last_pos(self):
